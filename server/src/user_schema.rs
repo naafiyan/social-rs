@@ -1,7 +1,7 @@
-use mongodm::{sync_indexes, CollectionConfig, Index, IndexOption, Indexes, Model, ToRepository};
+use mongodm::{CollectionConfig, Index, IndexOption, Indexes, Model};
 use serde::{Deserialize, Serialize};
 
-struct UserCollConfig;
+pub struct UserCollConfig;
 
 impl CollectionConfig for UserCollConfig {
     fn collection_name() -> &'static str {
@@ -15,14 +15,25 @@ impl CollectionConfig for UserCollConfig {
 }
 
 #[derive(Serialize, Deserialize, Debug, PartialEq)]
-struct User {
-    username: String,
-    first_name: String,
-    last_name: String,
-    age: u8,
-    email: String,
+pub struct User {
+    pub username: String,
+    pub first_name: String,
+    pub last_name: String,
+    pub age: u8,
+    pub email: String,
 }
 
 impl Model for User {
+    type CollConf = UserCollConfig;
+}
+
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
+pub struct UserB {
+    pub username: u8,
+    pub first_name: String,
+    pub last_name: String,
+}
+
+impl Model for UserB {
     type CollConf = UserCollConfig;
 }
