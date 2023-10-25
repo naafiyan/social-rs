@@ -1,4 +1,4 @@
-use mongodm::{CollectionConfig, Index, IndexOption, Indexes, Model};
+use mongododm::{CollectionConfig, Index, IndexOption, Indexes, Model};
 use serde::{Deserialize, Serialize};
 
 pub struct UserCollConfig;
@@ -14,7 +14,7 @@ impl CollectionConfig for UserCollConfig {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct User {
     pub username: String,
     pub first_name: String,
