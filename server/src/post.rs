@@ -1,9 +1,8 @@
 use mongododm::{CollectionConfig, Index, IndexOption, Indexes, Model};
-use mongowner::owned_by;
 use serde::{Deserialize, Serialize};
-use user_schema::User;
-
-use crate::user_schema;
+use crate::user;
+use user::User;
+use mongowner::Schema;
 
 pub struct PostCollConfig;
 
@@ -13,11 +12,11 @@ impl CollectionConfig for PostCollConfig {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
-#[owned_by(User)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Schema)]
 pub struct Post {
     pub text: String,
-    pub posted_by: User,
+    #[owned_by(User)]
+    pub posted_by: u32,
     pub date: String,
 }
 

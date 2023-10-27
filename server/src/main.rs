@@ -1,12 +1,10 @@
-mod post_schema;
-mod user_schema;
+mod post;
+mod user;
+use user::User;
+use post::Post;
 use mongododm::f;
 use mongododm::mongo::{bson::doc, options::ClientOptions, Client};
 use mongododm::ToRepository;
-use mongowner::owned_by;
-use post_schema::Post;
-use user_schema::User;
-use user_schema::UserB;
 
 #[tokio::main]
 async fn main() -> mongododm::mongo::error::Result<()> {
@@ -16,12 +14,7 @@ async fn main() -> mongododm::mongo::error::Result<()> {
     // Set the server_api field of the client_options object to Stable API version 1
     let client = Client::with_options(client_options)?;
     // Send a ping to confirm a successful connection
-    let db = client.database("test1");
-    let test_user = UserB {
-        username: 123,
-        first_name: "Bob".to_string(),
-        last_name: "Alice".to_string(),
-    };
+    let db = client.database("social");
 
     let test_user_a = User {
         username: "Alice".to_string(),
@@ -33,12 +26,12 @@ async fn main() -> mongododm::mongo::error::Result<()> {
 
     let post = Post {
         text: "Hello this is a post".to_string(),
-        posted_by: test_user_a.clone(), // This should probably ref an id or something
+        posted_by: 0,
         date: "12th March 2023".to_string(),
     };
 
     // enforces that the repository i.e. collection is of type User
-    let repository = db.repository::<user_schema::User>();
+    let repository = db.repository::<User>();
     repository.insert_one(&test_user_a, None).await?;
 
     let found_user = repository
