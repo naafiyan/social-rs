@@ -26,40 +26,45 @@ async fn main() -> mongododm::mongo::error::Result<()> {
     let client = Client::with_options(client_options)?;
     // Send a ping to confirm a successful connection
     let db = client.database("test1");
-    // let test_user = UserB {
-    //     username: 123,
-    //     first_name: "Bob".to_string(),
-    //     last_name: "Alice".to_string(),
-    // };
+
 
     let test_user_a = User {
-        username: "Alice".to_string(),
+        username: "alice".to_string(),
         first_name: "Alice".to_string(),
-        last_name: "Bob".to_string(),
+        last_name: "of Wonderland".to_string(),
         age: 2,
-        email: "alice_bob".to_string(),
+        email: "alice_of_wonderland@brown.edu".to_string(),
+    };
+
+    let test_user_b = User {
+        username: "bob".to_string(),
+        first_name: "Bob".to_string(),
+        last_name: "Ross".to_string(),
+        age: 75,
+        email: "bob_ross@brown.edu".to_string(),
     };
 
     let post_a = Post {
         text: "Hello this is a post".to_string(),
-        posted_by_username: test_user_a.username.to_string().clone(), // This should probably ref an id or something
+        posted_by_username: test_user_a.username.to_string().clone(), 
         date: "12th March 2023".to_string(),
     };
 
     // enforces that the repository i.e. collection is of type User
     let user_repository = db.repository::<user_schema::User>();
     user_repository.insert_one(&test_user_a, None).await?;
+    user_repository.insert_one(&test_user_b, None).await?;
+
+    let mut users_cursor = user_repository.find(doc! {"$and": vec! [doc! {"age": doc! {"$lt": 100} }]}, None).await?;
+    while users_cursor.advance().await? {
+        println!("{:?}", users_cursor.deserialize_current()?);
+    }
 
     let post_repository = db.repository::<post_schema::Post>();
     post_repository.insert_one(&post_a, None).await?;
     
 
     println!("Test user a username {:?}", test_user_a.username);
-
-    // let poster_user =  repository
-    //     .find_one(doc! {f!(posted_by_username in Post): test_user_a.username.to_string()}, None)
-    //     .await?;
-    // println!("Found poster user: {:?}", poster_user);
 
     let found_user = user_repository
         .find_one(doc! { f!(username in User): "Alice" }, None)
