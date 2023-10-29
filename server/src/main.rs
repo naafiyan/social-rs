@@ -7,11 +7,20 @@ use mongododm::ToRepository;
 use post_schema::Post;
 use user_schema::User;
 // use user_schema::UserB;
+use std::env;
+extern crate dotenv;
+use dotenv::dotenv;
+
 
 #[tokio::main]
 async fn main() -> mongododm::mongo::error::Result<()> {
-    // Replace the placeholder with your Atlas connection string
-    let uri = "mongodb://localhost:27017";
+    // Create a .env file in the "server" folder. Should only have one line, which is:
+    // MONGOURI=mongodb+srv://[XYZ YOUR MONGO DB URI HERE]
+    dotenv().ok();
+    let uri = match env::var("MONGOURI") {
+        Ok(v) => v.to_string(),
+        Err(_) => format!("Error loading env variable"),
+    };
     let client_options = ClientOptions::parse(uri).await?;
     // Set the server_api field of the client_options object to Stable API version 1
     let client = Client::with_options(client_options)?;
