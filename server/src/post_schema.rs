@@ -1,5 +1,5 @@
 use mongododm::{CollectionConfig, Model};
-use mongowner::owned_by;
+use mongowner::{owned_by};
 use serde::{Deserialize, Serialize};
 use user_schema::User;
 
@@ -17,7 +17,7 @@ impl CollectionConfig for PostCollConfig {
 #[owned_by(User)]
 pub struct Post {
     pub text: String,
-    pub posted_by: User,
+    pub posted_by_username: String,
     pub date: String,
 }
 

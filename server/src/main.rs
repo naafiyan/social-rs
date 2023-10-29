@@ -40,22 +40,42 @@ async fn main() -> mongododm::mongo::error::Result<()> {
         email: "alice_bob".to_string(),
     };
 
-    let _post = Post {
+    let post_a = Post {
         text: "Hello this is a post".to_string(),
-        posted_by: test_user_a.clone(), // This should probably ref an id or something
+        posted_by_username: test_user_a.username.to_string().clone(), // This should probably ref an id or something
         date: "12th March 2023".to_string(),
     };
 
     // enforces that the repository i.e. collection is of type User
-    let repository = db.repository::<user_schema::User>();
-    repository.insert_one(&test_user_a, None).await?;
+    let user_repository = db.repository::<user_schema::User>();
+    user_repository.insert_one(&test_user_a, None).await?;
 
-    let found_user = repository
+    let post_repository = db.repository::<post_schema::Post>();
+    post_repository.insert_one(&post_a, None).await?;
+    
+
+    println!("Test user a username {:?}", test_user_a.username);
+
+    // let poster_user =  repository
+    //     .find_one(doc! {f!(posted_by_username in Post): test_user_a.username.to_string()}, None)
+    //     .await?;
+    // println!("Found poster user: {:?}", poster_user);
+
+    let found_user = user_repository
         .find_one(doc! { f!(username in User): "Alice" }, None)
         .await?
         .unwrap();
 
     println!("Found user: {:?}", found_user);
-    println!("Pinged your deployment. You successfully connected to MongoDB!");
+
+
+    let found_post = post_repository
+        .find_one(doc! { f!(text in Post): "Hello this is a post" }, None)
+        .await?
+        .unwrap();
+    
+    println!("Found post: {:?}", found_post);
+
+
     Ok(())
 }
