@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::user;
 use user::User;
 use mongowner::Schema;
+use mongododm::delete::SafeDelete;
 
 pub struct PostCollConfig;
 

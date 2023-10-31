@@ -1,4 +1,5 @@
 use mongododm::{CollectionConfig, Index, IndexOption, Indexes, Model};
+use mongododm::mongo::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
 
 pub struct UserCollConfig;
@@ -16,6 +17,8 @@ impl CollectionConfig for UserCollConfig {
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
 pub struct User {
+    #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
+    pub id: Option<ObjectId>,
     pub username: String,
     pub first_name: String,
     pub last_name: String,
@@ -24,16 +27,5 @@ pub struct User {
 }
 
 impl Model for User {
-    type CollConf = UserCollConfig;
-}
-
-#[derive(Serialize, Deserialize, Debug, PartialEq)]
-pub struct UserB {
-    pub username: u8,
-    pub first_name: String,
-    pub last_name: String,
-}
-
-impl Model for UserB {
     type CollConf = UserCollConfig;
 }

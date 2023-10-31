@@ -1,8 +1,10 @@
 mod post;
 mod user;
+use std::str::FromStr;
+
 use user::User;
 use post::Post;
-use mongododm::f;
+use mongododm::{f, SafeDelete};
 use mongododm::mongo::{bson::doc, options::ClientOptions, Client};
 use mongododm::ToRepository;
 
@@ -17,12 +19,14 @@ async fn main() -> mongododm::mongo::error::Result<()> {
     let db = client.database("social");
 
     let test_user_a = User {
+        id: None,
         username: "Alice".to_string(),
         first_name: "Alice".to_string(),
         last_name: "Bob".to_string(),
         age: 2,
         email: "alice_bob".to_string(),
     };
+    test_user_a.safe_delete();
 
     let post = Post {
         text: "Hello this is a post".to_string(),
