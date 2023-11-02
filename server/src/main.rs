@@ -4,7 +4,7 @@ use std::str::FromStr;
 
 use user::User;
 use post::Post;
-use mongododm::{f, SafeDelete};
+use mongododm::{f, SafeDeleteable, Schemable};
 use mongododm::mongo::{bson::doc, options::ClientOptions, Client};
 use mongododm::ToRepository;
 
@@ -26,13 +26,16 @@ async fn main() -> mongododm::mongo::error::Result<()> {
         age: 2,
         email: "alice_bob".to_string(),
     };
-    test_user_a.safe_delete();
+    test_user_a.cascade_delete();
 
     let post = Post {
+        id: None,
         text: "Hello this is a post".to_string(),
         posted_by: 0,
         date: "12th March 2023".to_string(),
     };
+
+    println!("Posts collection name: {:?}", post.collection_name());
 
     // enforces that the repository i.e. collection is of type User
     let repository = db.repository::<User>();
